@@ -1,4 +1,5 @@
 #include "HIDCFG_Win32.h"
+#include "Input.h"
 
 int HIDCFG_WinMain(HINSTANCE HInst, HINSTANCE HPrevInst, PSTR CmdLine, int AppWin)
 {
@@ -38,6 +39,8 @@ int HIDCFG_WinMain(HINSTANCE HInst, HINSTANCE HPrevInst, PSTR CmdLine, int AppWi
 
 	GbRunning = true;
 	ShowWindow(WindowHandle, AppWin);
+
+	EnumerateHIDs(WindowHandle);
 
 	while (GbRunning)
 	{

@@ -12,12 +12,18 @@
     <ClCompile Include="src\HIDCFG_Win32.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\HIDCFG_Win32.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\HIDCFG_Common.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
