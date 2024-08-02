@@ -83,6 +83,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\HIDCFG.cpp" />
+    <ClCompile Include="src\HIDCFG_Win32.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\HIDCFG_Common.h" />
+    <ClInclude Include="src\HIDCFG_Win32.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
