@@ -29,58 +29,56 @@ int WINAPI WinMain
 	return ExitCode;
 }
 
+#define Assert(exp) \
+	if (!(exp)) \
+	{ \
+		OutputDebugStringA("FAILED ASSERT: " #exp "\n"); \
+		DebugBreak(); \
+	}
+
 int HIDCFG_WinMain(HINSTANCE HInst, HINSTANCE HPrevInst, PSTR CmdLine, int AppWin)
 {
 	int ExitCode = 0;
 
-	WNDCLASSEX WindClass = {};
-	WindClass.cbSize = sizeof(WNDCLASSEX);
-	WindClass.style = CS_GLOBALCLASS|CS_HREDRAW|CS_VREDRAW;
-	WindClass.lpfnWndProc = HIDCFG_WinProc;
-	WindClass.hInstance = HInst;
-	WindClass.lpszClassName = GAppNameW;
-	//WindClass.cbClsExtra = 0;
-	//WindClass.cbWndExtra = 0;
-	//WindClass.hIcon;
-	//WindClass.hCursor;
-	//WindClass.hbrBackground;
-	//WindClass.lpszMenuName;
-	//WindClass.hIconSm;
+	WNDCLASSEX WndClass = {};
+	WndClass.cbSize = sizeof(WNDCLASSEX);
+	WndClass.style = CS_GLOBALCLASS|CS_HREDRAW|CS_VREDRAW;
+	WndClass.lpfnWndProc = HIDCFG_WinProc;
+	WndClass.hInstance = HInst;
+	WndClass.lpszClassName = GAppNameW;
 
-	RegisterClassEx(&WindClass);
+	RegisterClassEx(&WndClass);
+
+	RECT WndRect = { 0, 0, GWindowWidth, GWindowHeight };
+	DWORD WndStyle = WS_CAPTION;
+	DWORD WndExStyle = WS_EX_OVERLAPPEDWINDOW;
+	AdjustWindowRectEx(&WndRect, WndStyle, FALSE, WndExStyle);
 
 	HWND WindowHandle = CreateWindowEx
 	(
-		0,
+		WndExStyle,
 		GAppNameW,
 		GAppNameW,
-		WS_OVERLAPPEDWINDOW,
+		WndStyle,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		WndRect.right - WndRect.left,
+		WndRect.bottom - WndRect.top,
 		nullptr,
 		nullptr,
 		HInst,
 		nullptr
 	);
 
-	if (WindowHandle)
-	{
-		GbRunning = true;
+	Assert(WindowHandle);
 
-		ShowWindow(WindowHandle, AppWin);
+	GbRunning = true;
+	ShowWindow(WindowHandle, AppWin);
 
-		while (GbRunning)
-		{
-			// ...
-		}
-	}
-	else
+	while (GbRunning)
 	{
-		DWORD Error = GetLastError();
-		ExitCode = 1;
-		DebugBreak();
+		// ...
+		break;
 	}
 
 	return ExitCode;
@@ -90,14 +88,7 @@ LRESULT CALLBACK HIDCFG_WinProc(HWND WinHandle, UINT msg, WPARAM wparam, LPARAM 
 {
 	// CKA_TODO: Implement
 
-	LRESULT Result = 0;
-
-	switch (msg)
-	{
-		default:
-		{
-		} break;
-	}
+	LRESULT Result = DefWindowProc(WinHandle, msg, wparam, lparam);
 
 	return Result;
 }
