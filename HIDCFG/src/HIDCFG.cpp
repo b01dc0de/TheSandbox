@@ -98,7 +98,6 @@ LRESULT HIDCFG_HandleKeyMsg(UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		switch (wparam)
 		{
-			case VK_MBUTTON:
 			case VK_ESCAPE:
 			{
 				GbRunning = false;
