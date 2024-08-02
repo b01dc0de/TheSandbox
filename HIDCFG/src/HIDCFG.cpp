@@ -77,18 +77,68 @@ int HIDCFG_WinMain(HINSTANCE HInst, HINSTANCE HPrevInst, PSTR CmdLine, int AppWi
 
 	while (GbRunning)
 	{
+		MSG msg;
+		BOOL Result;
+		while (Result = PeekMessage(&msg, WindowHandle, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		// ...
-		break;
 	}
 
 	return ExitCode;
 }
 
+LRESULT HIDCFG_HandleKeyMsg(UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	LRESULT Result = 0;
+
+	if (msg == WM_KEYDOWN)
+	{
+		switch (wparam)
+		{
+			case VK_MBUTTON:
+			case VK_ESCAPE:
+			{
+				GbRunning = false;
+			} break;
+			default:
+			{
+				// ...
+			} break;
+		}
+	}
+	else if (msg == WM_KEYDOWN)
+	{
+		// ...
+	}
+
+	return Result;
+}
+
 LRESULT CALLBACK HIDCFG_WinProc(HWND WinHandle, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	// CKA_TODO: Implement
+	LRESULT Result = 0;
 
-	LRESULT Result = DefWindowProc(WinHandle, msg, wparam, lparam);
+	switch (msg)
+	{
+		case WM_CLOSE:
+		case WM_DESTROY:
+		case WM_QUIT:
+		{
+			GbRunning = false;
+		} break;
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		{
+			Result = HIDCFG_HandleKeyMsg(msg, wparam, lparam);
+		} break;
+		default:
+		{
+			Result = DefWindowProc(WinHandle, msg, wparam, lparam);
+		} break;
+	}
 
 	return Result;
 }
