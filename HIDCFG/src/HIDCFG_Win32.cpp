@@ -40,7 +40,7 @@ int HIDCFG_WinMain(HINSTANCE HInst, HINSTANCE HPrevInst, PSTR CmdLine, int AppWi
 	GbRunning = true;
 	ShowWindow(WindowHandle, AppWin);
 
-	EnumerateHIDs(WindowHandle);
+	RIDList RInputDeviceList = EnumerateHIDs(WindowHandle);
 
 	while (GbRunning)
 	{

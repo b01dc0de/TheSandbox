@@ -1,47 +1,60 @@
 #include "RawInputDevice.h"
 
 #include <hidusage.h>
-
-#define ENABLE_MOUSE_INPUT 0
-#define ENABLE_GAMEPAD_INPUT 0
-#define ENABLE_KEYBOARD_INPUT 1
-static_assert(ENABLE_MOUSE_INPUT || ENABLE_GAMEPAD_INPUT || ENABLE_KEYBOARD_INPUT);
-
-enum struct RIDType
+void RIDList::AddRID(RAWINPUTDEVICELIST& InRID, RIDType InType)
 {
-	Dev_Keyboard,
-	Dev_Mouse,
-	Dev_HID
-};
+	if (NumEntries + 1 >= ListCapacity)
+	{
+		IncList();
+		Assert(NumEntries + 1 < ListCapacity);
+	}
 
-struct RawInputDevice
-{
-	HANDLE DevHndl = nullptr;
-	char* DevName = nullptr;
-	RID_DEVICE_INFO DevInfo{};
-};
+	RawInputDevice NewRID {};
+	NewRID.DevType = InType;
+	NewRID.DevHndl = InRID.hDevice;
 
-struct RIDList
-{
-	static constexpr int InitCapacity = 16;
-	static constexpr int IncFactor = 2;
-	int ListCapacity = InitCapacity;
-	int NumEntries = 0;
-	RawInputDevice* DevList = new RawInputDevice[InitCapacity];
+	NewRID.DevInfo.cbSize = sizeof(RID_DEVICE_INFO);
+	UINT WriteSize = 0;
+	GetRawInputDeviceInfoA(InRID.hDevice, RIDI_DEVICEINFO, nullptr, &WriteSize);
+	GetRawInputDeviceInfoA(InRID.hDevice, RIDI_DEVICEINFO, &NewRID.DevInfo, &WriteSize);
 
-	void AddRID(RAWINPUTDEVICELIST& InRID);
-	~RIDList();
-};
+	Assert(0 == GetRawInputDeviceInfoA(InRID.hDevice, RIDI_DEVICENAME, nullptr, &WriteSize));
+	if (WriteSize > 0)
+	{
+		NewRID.DevName = new char[WriteSize + 1];
+		Assert(-1 != GetRawInputDeviceInfoA(InRID.hDevice, RIDI_DEVICENAME, NewRID.DevName, &WriteSize));
+		NewRID.DevName[WriteSize + 1] = L'\0';
+	}
 
-void RIDList::AddRID(RAWINPUTDEVICELIST& InRID)
-{
+	DevList[NumEntries++] = NewRID;
 }
 
-RIDList::~RIDList()
+void RIDList::IncList()
 {
+	int NewCapacity = ListCapacity * IncFactor;
+	RawInputDevice* NewList = new RawInputDevice[NewCapacity];
+	for (int DevIdx = 0; DevIdx < NumEntries; DevIdx++)
+	{
+		NewList[DevIdx] = DevList[DevIdx];
+	}
+
+	delete[] DevList;
+	ListCapacity = NewCapacity;
+	DevList = NewList;
 }
 
-int EnumerateHIDs(HWND InWnd)
+void RIDList::Delete()
+{
+	for (int DevIdx = 0; DevIdx < NumEntries; DevIdx++)
+	{
+		delete[] DevList[DevIdx].DevName;
+		DevList[DevIdx].DevName = nullptr;
+	}
+	delete[] DevList;
+	DevList = nullptr;
+}
+
+RIDList EnumerateHIDs(HWND InWnd)
 {
 	// Covers Keyboard, Mouse, Gamepad
 	constexpr USHORT GenericUsagePage = 0x0001;
@@ -49,7 +62,7 @@ int EnumerateHIDs(HWND InWnd)
 	//CKA_TODO: the call to Register...() fails if KbdFlags includes -> RIDEV_NOLEGACY|RIDEV_APPKEYS
 	const DWORD KbdFlags = RIDEV_EXINPUTSINK|RIDEV_DEVNOTIFY;
 
-	const RAWINPUTDEVICE RIDList[] =
+	const RAWINPUTDEVICE RIDRegistrationList[] =
 	{
 		// https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-rawinputdevice
 		// { USHORT usUsagePage, USHORT usUsage, DWORD dwFlags, HWND hwndTarget }
@@ -68,41 +81,34 @@ int EnumerateHIDs(HWND InWnd)
 		//{ GenericUsagePage, HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER, 0, InWnd },
 	};
 
-	UINT NumRIDs = ARRAYSIZE(RIDList);
-
-	Assert(RegisterRawInputDevices(RIDList, NumRIDs, sizeof(RAWINPUTDEVICE)));
+	UINT NumRIDs = ARRAYSIZE(RIDRegistrationList);
+	Assert(RegisterRawInputDevices(RIDRegistrationList, NumRIDs, sizeof(RAWINPUTDEVICE)));
 
 	UINT NumDevs = 0;
-	RAWINPUTDEVICELIST* RDeviceList = nullptr;
-	UINT Result = GetRawInputDeviceList(nullptr, &NumDevs, sizeof(RAWINPUTDEVICE));
-
-	UINT NumHIDs = 0;
-	UINT NumKbds = 0;
-	UINT NumMice = 0;
+	RAWINPUTDEVICELIST* SysRIDevList = nullptr;
+	GetRawInputDeviceList(nullptr, &NumDevs, sizeof(RAWINPUTDEVICE));
 	if (NumDevs > 0)
 	{
-		RDeviceList = new RAWINPUTDEVICELIST[NumDevs];
-		GetRawInputDeviceList(RDeviceList, &NumDevs, sizeof(RAWINPUTDEVICE));
+		SysRIDevList = new RAWINPUTDEVICELIST[NumDevs];
+		GetRawInputDeviceList(SysRIDevList, &NumDevs, sizeof(RAWINPUTDEVICE));
 	}
+	RIDList DeviceList{};
 	for (int DevIdx = 0; DevIdx < NumDevs; DevIdx++)
 	{
-		switch (RDeviceList[DevIdx].dwType)
+		RAWINPUTDEVICELIST& CurrRID = SysRIDevList[DevIdx];
+		switch (CurrRID.dwType)
 		{
-			case RIM_TYPEHID: { NumHIDs++; } break;
-			case RIM_TYPEKEYBOARD: { NumKbds++; } break;
-			case RIM_TYPEMOUSE: { NumMice++; } break;
-		}
-	}
-	for (int DevIdx = 0, KbdIdx = 0; DevIdx < NumDevs; DevIdx++)
-	{
-		RAWINPUTDEVICELIST& CurrDev = RDeviceList[DevIdx];
-		if (CurrDev.dwType == RIM_TYPEKEYBOARD)
-		{
-			// ...
-			//GetRawInputDeviceInfo(CurrDev.hDevice, RIDI_DEVICENAME, )
-			//GetRawInputDeviceInfo(CurrDev.hDevice, RIDI_DEVICEINFO, )
+#if ENABLE_MOUSE_INPUT
+			case RIM_TYPEMOUSE: { DeviceList.AddRID(SysRIDevList[DevIdx], RIDType::Mouse); } break;
+#endif // ENABLE_MOUSE_INPUT 
+#if ENABLE_KEYBOARD_INPUT
+			case RIM_TYPEKEYBOARD: { DeviceList.AddRID(SysRIDevList[DevIdx], RIDType::Keyboard); } break;
+#endif // ENABLE_KEYBOARD_INPUT
+#if ENABLE_GAMEPAD_INPUT
+			case RIM_TYPEHID: { DeviceList.AddRID(SysRIDevList[DevIdx], RIDType::HID); } break;
+#endif // ENABLE_GAMEPAD_INPUT
 		}
 	}
 
-	return NumRIDs;
+	return DeviceList;
 }
