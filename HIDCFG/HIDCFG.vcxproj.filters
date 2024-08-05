@@ -12,7 +12,7 @@
     <ClCompile Include="src\HIDCFG_Win32.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input.cpp">
+    <ClCompile Include="src\RawInputDevice.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -23,7 +23,7 @@
     <ClInclude Include="src\HIDCFG_Common.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Input.h">
+    <ClInclude Include="src\RawInputDevice.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

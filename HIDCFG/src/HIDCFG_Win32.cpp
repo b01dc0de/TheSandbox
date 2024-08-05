@@ -1,5 +1,5 @@
 #include "HIDCFG_Win32.h"
-#include "Input.h"
+#include "RawInputDevice.h"
 
 int HIDCFG_WinMain(HINSTANCE HInst, HINSTANCE HPrevInst, PSTR CmdLine, int AppWin)
 {
