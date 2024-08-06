@@ -1,11 +1,13 @@
 #ifndef THESANDBOX_H
 #define THESANDBOX_H
 
+#include "TheSandbox_Common.h"
+
 namespace TheSandbox
 {
-	void TheSandbox_Init();
-	void TheSandbox_MainLoop();
-	void TheSandbox_Term();
+	int MainLoop();
+	int Init(HINSTANCE Inst, HINSTANCE PrevInst, PSTR CmdLine, int WndShow);
+	int Term();
 }
 
 #endif // THESANDBOX_H

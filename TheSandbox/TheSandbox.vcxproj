@@ -87,6 +87,7 @@
     <ClCompile Include="src\TheSandbox_WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\TheSandbox.h" />
     <ClInclude Include="src\TheSandbox_Common.h" />
     <ClInclude Include="src\TheSandbox_Win32.h" />
   </ItemGroup>

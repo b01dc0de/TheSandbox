@@ -11,6 +11,9 @@
 // C/C++ std lib headers
 #include <cstdio>
 
-extern bool bGlobalRunning;
+namespace TheSandbox
+{
+	extern bool bRunning;
+}
 
 #endif // THESANDBOX_COMMON_H

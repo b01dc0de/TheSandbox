@@ -23,5 +23,8 @@
     <ClInclude Include="src\TheSandbox_Common.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\TheSandbox.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
