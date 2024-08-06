@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef RAWINPUTDEVICE_H
+#define RAWINPUTDEVICE_H
 
 #include "HIDCFG_Common.h"
 
@@ -39,4 +39,4 @@ struct RIDList
 
 RIDList EnumerateHIDs(HWND InWnd);
 
-#endif // INPUT_H
+#endif // RAWINPUTDEVICE_H

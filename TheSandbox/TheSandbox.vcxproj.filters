@@ -9,5 +9,19 @@
     <ClCompile Include="src\TheSandbox.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\TheSandbox_Win32.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TheSandbox_WinMain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\TheSandbox_Win32.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TheSandbox_Common.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,13 +1,19 @@
-#include <cstdio>
+#include "TheSandbox.h"
 
-int main(int argc, const char* argv[])
+namespace TheSandbox
 {
-	printf("TheSandbox -- INIT\n");
-
-	for (int i = 0; i < argc; i++)
+	void TheSandbox_MainLoop()
 	{
-		printf("\t%s\n", argv[i]);
+		// TODO
 	}
 
-	printf("TheSandbox -- TERM\n");
+	void TheSandbox_Init()
+	{
+		// TODO
+	}
+
+	void TheSandbox_Term()
+	{
+		// TODO
+	}
 }
