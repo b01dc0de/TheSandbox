@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TheSandbox", "TheSandbox\Th
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HIDCFG", "HIDCFG\HIDCFG.vcxproj", "{305FA7EC-9E60-40EB-B829-39264964340E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShaderAtoll", "ShaderAtoll\ShaderAtoll.vcxproj", "{969A580E-2212-451A-B655-83DBC6EB562F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{305FA7EC-9E60-40EB-B829-39264964340E}.Debug|x64.Build.0 = Debug|x64
 		{305FA7EC-9E60-40EB-B829-39264964340E}.Release|x64.ActiveCfg = Release|x64
 		{305FA7EC-9E60-40EB-B829-39264964340E}.Release|x64.Build.0 = Release|x64
+		{969A580E-2212-451A-B655-83DBC6EB562F}.Debug|x64.ActiveCfg = Debug|x64
+		{969A580E-2212-451A-B655-83DBC6EB562F}.Debug|x64.Build.0 = Debug|x64
+		{969A580E-2212-451A-B655-83DBC6EB562F}.Release|x64.ActiveCfg = Release|x64
+		{969A580E-2212-451A-B655-83DBC6EB562F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

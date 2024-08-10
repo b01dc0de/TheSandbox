@@ -6,6 +6,18 @@ const WCHAR* TSB_AppName = L"TheSandbox";
 constexpr UINT TSB_AppWidth = 1600u;
 constexpr UINT TSB_AppHeight = 900u;
 
+// CKA_NOTE: See https://www.khronos.org/opengl/wiki/Load_OpenGL_Functions#Windows_2
+void* GetAnyGLFuncAddress(const char* name)
+{
+	void* p = (void*)wglGetProcAddress(name);
+	if (p == 0 || (p == (void*)0x1) || (p == (void*)0x2) || (p == (void*)0x3) || (p == (void*)-1))
+	{
+		HMODULE module = LoadLibraryA("opengl32.dll");
+		if (module) { p = (void*)GetProcAddress(module, name); }
+	}
+
+	return p;
+}
 
 namespace TheSandbox
 {
@@ -83,6 +95,22 @@ namespace TheSandbox
 		PxFmtDesc.cDepthBits = 24;
 		PxFmtDesc.cStencilBits = 8;
 		PxFmtDesc.iLayerType = PFD_MAIN_PLANE;
+
+		if (WindowHandle)
+		{ // Create Dummy GL context
+			PIXELFORMATDESCRIPTOR DummyPxFmtDesc = PxFmtDesc;
+
+			HDC dummy_hdc = GetDC(WindowHandle);
+			HGLRC dummy_glrc = wglCreateContext(dummy_hdc);
+
+			int iDummyPxFmt = ChoosePixelFormat(TheSandbox::opengl_dc, &PxFmtDesc);
+			SetPixelFormat(TheSandbox::opengl_dc, iDummyPxFmt, &PxFmtDesc);
+
+			wglMakeCurrent(dummy_hdc, dummy_glrc);
+
+			wglMakeCurrent(nullptr, nullptr);
+			wglDeleteContext(dummy_glrc);
+		}
 
 		if (WindowHandle)
 		{
